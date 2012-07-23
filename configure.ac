@@ -7,6 +7,20 @@ AC_CONFIG_FILES([rtaudio-config librtaudio.pc Makefile tests/Makefile])
 # Fill GXX with something before test.
 AC_SUBST( GXX, ["no"] )
 
+dnl Check for pkg-config program, used for configuring some libraries.
+m4_define_default([PKG_PROG_PKG_CONFIG],
+[AC_MSG_CHECKING([pkg-config])
+AC_MSG_RESULT([no])])
+
+PKG_PROG_PKG_CONFIG
+
+dnl If the pkg-config autoconf support isn't installed, define its
+dnl autoconf macro to disable any packages depending on it.
+m4_define_default([PKG_CHECK_MODULES],
+[AC_MSG_CHECKING([$1])
+AC_MSG_RESULT([no])
+$4])
+
 # Checks for programs.
 AC_PROG_CXX(g++ CC c++ cxx)
 AC_PROG_RANLIB
