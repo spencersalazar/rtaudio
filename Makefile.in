@@ -28,9 +28,8 @@ $(LIBRARIES): $(OBJECTS)
 	$(AR) ruv $(STATIC) $(OBJECTS)
 	ranlib $(STATIC)
 	$(CC) -fPIC @libflags@ $(OBJECTS) @LIBS@
-	$(LN) -s @sharedname@ $(SHARED)
-
-#	$(CC) -shared $(OBJECTS) -o $(SHARED) @LIBS@
+	$(LN) -sf @sharedname@ $(SHARED)
+	$(LN) -sf @sharedname@ $(SHARED).$(MAJOR)
 
 %.o : %.cpp
 	$(CC) $(CFLAGS) $(DEFS) -c $(<) -o $@
