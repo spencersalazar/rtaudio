@@ -2,7 +2,7 @@
 AC_INIT(RtAudio, 4.0, gary@music.mcgill.ca, rtaudio)
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_SRCDIR(RtAudio.cpp)
-AC_CONFIG_FILES([rtaudio-config Makefile tests/Makefile])
+AC_CONFIG_FILES([rtaudio-config librtaudio.pc Makefile tests/Makefile])
 
 # Fill GXX with something before test.
 AC_SUBST( GXX, ["no"] )
@@ -58,6 +58,7 @@ esac
 
 # Checks for package options and external software
 AC_SUBST( api, [""] )
+AC_SUBST( req, [""] )
 AC_MSG_CHECKING(for audio API)
 case $host in
   *-*-netbsd*)
@@ -77,14 +78,17 @@ case $host in
   # Look for ALSA flag
   AC_ARG_WITH(alsa, [  --with-alsa = choose native ALSA API support (linux only)], [
     api="$api -D__LINUX_ALSA__"
+    req="$req alsa"
     AC_MSG_RESULT(using ALSA)
     AC_CHECK_LIB(asound, snd_pcm_open, , AC_MSG_ERROR(ALSA support requires the asound library!))], )
 
   # Look for PULSE flag
   AC_ARG_WITH(pulse, [  --with-pulse = choose PulseAudio API support (linux only)], [
     api="$api -D__LINUX_PULSE__"
+    req="$req libpulse-simple"
     AC_MSG_RESULT(using PulseAudio)
-    PKG_CHECK_MODULES([PULSE], [libpulse-simple], , AC_MSG_ERROR(PulseAudio support requires the pulse-simple library!))], )
+    PKG_CHECK_MODULES([PULSE], [libpulse-simple], , AC_MSG_ERROR(PulseAudio support requires the pulse-simple library!))
+    LIBS="$LIBS `pkg-config --libs libpulse-simple`" ], )
 
   # Look for OSS flag
   AC_ARG_WITH(oss, [  --with-oss = choose OSS API support (linux only)], [
@@ -95,6 +99,7 @@ case $host in
   if [test "$api" == "";] then
     AC_MSG_RESULT(using ALSA)
     AC_SUBST( api, [-D__LINUX_ALSA__] )
+    req="$req alsa"
     AC_CHECK_LIB(asound, snd_pcm_open, , AC_MSG_ERROR(ALSA support requires the asound library!))
   fi
 
