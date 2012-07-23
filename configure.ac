@@ -84,7 +84,7 @@ case $host in
   AC_ARG_WITH(pulse, [  --with-pulse = choose PulseAudio API support (linux only)], [
     api="$api -D__LINUX_PULSE__"
     AC_MSG_RESULT(using PulseAudio)
-    AC_CHECK_LIB(pulse-simple, pa_simple_new, , AC_MSG_ERROR(PulseAudio support requires the pulse-simple library!))], )
+    PKG_CHECK_MODULES([PULSE], [libpulse-simple], , AC_MSG_ERROR(PulseAudio support requires the pulse-simple library!))], )
 
   # Look for OSS flag
   AC_ARG_WITH(oss, [  --with-oss = choose OSS API support (linux only)], [
